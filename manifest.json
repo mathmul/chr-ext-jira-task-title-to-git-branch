@@ -14,7 +14,7 @@
         "https://atlassian.net/*"
       ],
       "js": [
-        "create-copy-popup.js"
+        "chr-ext-jira-task-title-to-git-branch.js"
       ],
       "run_at": "document_idle"
     }

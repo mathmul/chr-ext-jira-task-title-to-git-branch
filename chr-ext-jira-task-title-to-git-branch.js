@@ -37,6 +37,8 @@ const copyInputToClipboard = () => {
     branchNameInput.setSelectionRange(0, 99999)
 
     navigator.clipboard.writeText(branchNameInput.value)
+
+    closePopup()
 }
 
 const closePopup = () => {
@@ -44,6 +46,10 @@ const closePopup = () => {
 }
 
 const createPopup = () => {
+
+    titleH1 = document.querySelector('h1')
+    if (!titleH1) return
+    if (!titleH1.innerText) return
 
     popupContainer = document.createElement('div')
     popupContainer.style.position = 'absolute'
@@ -56,8 +62,6 @@ const createPopup = () => {
     popupContainer.style.gap = '.2em'
     popupContainer.style.alignItems = 'center'
     popupContainer.style.flexWrap = 'wrap'
-
-    titleH1 = document.querySelector('h1')
 
     branchTypeSelect = document.createElement('select')
     branchTypeSelect.id = 'branchType'
@@ -173,7 +177,6 @@ const observeDOMChanges = () => {
     const observer = new MutationObserver(mutations => {
         mutations.forEach(mutation => {
             if (document.body.contains(titleH1)) return
-            if (!document.querySelector('h1').innerText) return
             createPopup()
         })
     })
