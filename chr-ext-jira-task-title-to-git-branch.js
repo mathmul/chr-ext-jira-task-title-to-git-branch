@@ -2,6 +2,7 @@ let popupContainer
 let titleH1
 let branchTypeSelect
 let includeTaskKeyCheckbox
+let includeGitCmdCheckbox
 let branchNameInput
 
 const getJiraTaskKey = () =>
@@ -27,7 +28,17 @@ const generateBranchName = () => {
     if (undefined == includeTaskKeyCheckbox)
         includeTaskKeyCheckbox = document.querySelector('#includeTaskKey')
 
-    branchNameInput.value = `${branchTypeSelect.value}/${includeTaskKeyCheckbox.checked ? getJiraTaskKey() : ''}${slugifyText(titleH1.innerText)}`
+    if (undefined == includeGitCmdCheckbox)
+        includeGitCmdCheckbox = document.querySelector('#includeGitCmd')
+
+    branchNameInput.value = ''
+    if (includeGitCmdCheckbox.checked)
+        branchNameInput.value += `git checkout -b `
+    if (branchTypeSelect.value != 'null')
+        branchNameInput.value += `${branchTypeSelect.value}/`
+    if (includeTaskKeyCheckbox.checked)
+        branchNameInput.value += getJiraTaskKey()
+    branchNameInput.value += slugifyText(titleH1.innerText)
 }
 
 const copyInputToClipboard = () => {
@@ -41,9 +52,8 @@ const copyInputToClipboard = () => {
     closePopup()
 }
 
-const closePopup = () => {
+const closePopup = () =>
     popupContainer.style.display = 'none'
-}
 
 const createPopup = () => {
 
@@ -78,6 +88,7 @@ const createPopup = () => {
         <option value="feature">Feature</option>
         <option value="bugfix">Bugfix</option>
         <option value="hotfix">Hotfix</option>
+        <option value="null">&lt;none&gt;</option>
     `
     branchTypeSelect.addEventListener('change', generateBranchName)
 
@@ -90,8 +101,20 @@ const createPopup = () => {
     const includeTaskKeyLabel = document.createElement('label')
     includeTaskKeyLabel.htmlFor = 'includeTaskKey'
     includeTaskKeyLabel.style.cursor = 'pointer'
-    includeTaskKeyLabel.textContent = 'Include task key'
+    includeTaskKeyLabel.textContent = 'Task key'
     includeTaskKeyCheckbox.addEventListener('change', generateBranchName)
+
+    includeGitCmdCheckbox = document.createElement('input')
+    includeGitCmdCheckbox.type = 'checkbox'
+    includeGitCmdCheckbox.id = 'includeGitCmd'
+    includeGitCmdCheckbox.checked = true
+    includeGitCmdCheckbox.style.marginLeft = 'auto'
+    includeGitCmdCheckbox.style.cursor = 'pointer'
+    const includeGitCmdLabel = document.createElement('label')
+    includeGitCmdLabel.htmlFor = 'includeGitCmd'
+    includeGitCmdLabel.style.cursor = 'pointer'
+    includeGitCmdLabel.textContent = 'git command'
+    includeGitCmdCheckbox.addEventListener('change', generateBranchName)
 
     const copyButton = document.createElement('button')
     copyButton.style.marginLeft = 'auto'
@@ -162,6 +185,8 @@ const createPopup = () => {
     popupContainer.appendChild(branchTypeSelect)
     popupContainer.appendChild(includeTaskKeyCheckbox)
     popupContainer.appendChild(includeTaskKeyLabel)
+    popupContainer.appendChild(includeGitCmdCheckbox)
+    popupContainer.appendChild(includeGitCmdLabel)
     popupContainer.appendChild(copyButton)
     popupContainer.appendChild(cancelButton)
     popupContainer.appendChild(branchNameInput)
